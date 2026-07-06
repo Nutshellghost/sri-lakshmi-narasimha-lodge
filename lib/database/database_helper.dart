@@ -291,6 +291,19 @@ class DatabaseHelper {
     });
   }
 
+  Future<void> extendBooking(int bookingId, DateTime newCheckOutDate, double newTotalAmount) async {
+    final db = await database;
+    await db.update(
+      'bookings',
+      {
+        'check_out_date': newCheckOutDate.toIso8601String(),
+        'total_amount': newTotalAmount,
+      },
+      where: 'id = ?',
+      whereArgs: [bookingId],
+    );
+  }
+
   Future<List<Booking>> getGuestBookings(int guestId) async {
     final db = await database;
     final maps = await db.query(

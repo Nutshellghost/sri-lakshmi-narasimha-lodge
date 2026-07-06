@@ -120,6 +120,9 @@ class _BookingList extends StatelessWidget {
                 onCancel: booking.status == 'active'
                     ? () => _cancelBooking(context, booking)
                     : null,
+                onExtend: booking.status == 'active'
+                    ? () => _extendBooking(context, booking)
+                    : null,
               );
             },
           ),
@@ -276,6 +279,126 @@ class _BookingList extends StatelessWidget {
       }
     }
   }
+
+  Future<void> _extendBooking(BuildContext context, Booking booking) async {
+    final now = DateTime.now();
+    final currentCheckOut = booking.checkOutDate ?? now;
+    DateTime newCheckOut = currentCheckOut.add(const Duration(days: 1));
+
+    // Calculate current total if not set yet
+    final nightsSoFar = currentCheckOut.difference(booking.checkInDate).inDays;
+    final currentTotal = booking.totalAmount ?? (booking.roomPrice * (nightsSoFar > 0 ? nightsSoFar : 1));
+
+    final result = await showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (ctx) {
+        DateTime selectedDate = newCheckOut;
+        return StatefulBuilder(
+          builder: (ctx, setState) => AlertDialog(
+            title: Text('Extend Stay - Room ${booking.roomNumber}'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _row('Guest', booking.guestName),
+                  _row('Check-in', DateFormat('dd/MM/yyyy').format(booking.checkInDate)),
+                  _row('Current Check-out', booking.checkOutDate != null
+                      ? DateFormat('dd/MM/yyyy').format(booking.checkOutDate!)
+                      : 'Not set'),
+                  _row('Room Rate', '₹${booking.roomPrice.toStringAsFixed(0)}/night'),
+                  if (booking.totalAmount != null)
+                    _row('Current Total', '₹${booking.totalAmount!.toStringAsFixed(0)}'),
+                  const Divider(height: 20),
+                  // New checkout date picker
+                  InkWell(
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: ctx,
+                        initialDate: selectedDate,
+                        firstDate: currentCheckOut,
+                        lastDate: currentCheckOut.add(const Duration(days: 365)),
+                      );
+                      if (picked != null) setState(() => selectedDate = picked);
+                    },
+                    child: InputDecorator(
+                      decoration: const InputDecoration(
+                        labelText: 'New Check-out Date',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.calendar_today),
+                      ),
+                      child: Text(DateFormat('dd/MM/yyyy').format(selectedDate)),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // Calculations
+                  ..._buildExtendCalc(booking, selectedDate, currentTotal),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final additionalNights = _calcAdditionalNights(booking, selectedDate);
+                  final additionalCharge = booking.roomPrice * additionalNights;
+                  final newTotal = currentTotal + additionalCharge;
+                  Navigator.pop(ctx, {'newDate': selectedDate, 'newTotal': newTotal});
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue[700],
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Confirm Extension'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (result != null && context.mounted) {
+      final provider = context.read<LodgeProvider>();
+      await provider.extendBooking(
+        booking.id!,
+        result['newDate'] as DateTime,
+        result['newTotal'] as double,
+      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Booking extended successfully'),
+            backgroundColor: Colors.blue,
+          ),
+        );
+      }
+    }
+  }
+
+  double _calcAdditionalNights(Booking booking, DateTime newCheckOut) {
+    final baseDate = booking.checkOutDate ?? booking.checkInDate;
+    final diff = newCheckOut.difference(baseDate).inDays;
+    return diff > 0 ? diff.toDouble() : 0;
+  }
+
+  List<Widget> _buildExtendCalc(Booking booking, DateTime newDate, double currentTotal) {
+    final additionalNights = _calcAdditionalNights(booking, newDate);
+    final additionalCharge = booking.roomPrice * additionalNights;
+    final newTotal = currentTotal + additionalCharge;
+
+    return [
+      if (additionalNights > 0) ...[
+        _row('Additional Nights', '${additionalNights.toInt()} night${additionalNights > 1 ? 's' : ''}'),
+        _row('Additional Charges', '₹${additionalCharge.toStringAsFixed(0)}'),
+      ] else
+        _row('Note', 'New checkout must be after current', valueColor: Colors.red),
+      const Divider(height: 16),
+      _row('New Total', '₹${newTotal.toStringAsFixed(0)}', valueColor: Colors.blue[700]),
+    ];
+  }
 }
 
 class _BookingCard extends StatelessWidget {
@@ -283,12 +406,14 @@ class _BookingCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback? onCheckout;
   final VoidCallback? onCancel;
+  final VoidCallback? onExtend;
 
   const _BookingCard({
     required this.booking,
     required this.onTap,
     this.onCheckout,
     this.onCancel,
+    this.onExtend,
   });
 
   Color _statusColor() {
@@ -367,7 +492,7 @@ class _BookingCard extends StatelessWidget {
                   Text('₹${booking.advanceAmount.toStringAsFixed(0)}', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
                 ],
               ),
-              if (onCheckout != null || onCancel != null) ...[
+              if (onCheckout != null || onCancel != null || onExtend != null) ...[
                 const Divider(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -378,6 +503,13 @@ class _BookingCard extends StatelessWidget {
                         icon: const Icon(Icons.cancel_outlined, size: 18),
                         label: const Text('Cancel'),
                         style: TextButton.styleFrom(foregroundColor: Colors.red, padding: const EdgeInsets.symmetric(horizontal: 8)),
+                      ),
+                    if (onExtend != null)
+                      TextButton.icon(
+                        onPressed: onExtend,
+                        icon: const Icon(Icons.date_range, size: 18),
+                        label: const Text('Extend'),
+                        style: TextButton.styleFrom(foregroundColor: Colors.blue[700], padding: const EdgeInsets.symmetric(horizontal: 8)),
                       ),
                     const SizedBox(width: 4),
                     if (onCheckout != null)
@@ -394,7 +526,7 @@ class _BookingCard extends StatelessWidget {
                       ),
                   ],
                 ),
-              ],
+              ];
             ],
           ),
         ),

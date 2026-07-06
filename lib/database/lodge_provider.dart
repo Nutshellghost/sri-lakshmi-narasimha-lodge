@@ -109,6 +109,11 @@ class LodgeProvider extends ChangeNotifier {
     await loadAll();
   }
 
+  Future<void> extendBooking(int bookingId, DateTime newCheckOutDate, double newTotalAmount) async {
+    await _db.extendBooking(bookingId, newCheckOutDate, newTotalAmount);
+    await loadAll();
+  }
+
   Future<List<Guest>> searchGuests(String query) async {
     return await _db.searchGuests(query);
   }
