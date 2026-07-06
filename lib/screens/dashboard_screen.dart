@@ -37,77 +37,84 @@ class DashboardScreen extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                // Welcome header
+                // Welcome header — Airbnb style
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Theme.of(context).colorScheme.primary,
-                        Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
+                    color: const Color(0xFFFF5A5F),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        DateFormat('EEEE, MMMM d, yyyy').format(DateTime.now()),
-                        style: const TextStyle(color: Colors.white70, fontSize: 14),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Welcome to',
-                        style: TextStyle(color: Colors.white70, fontSize: 16),
-                      ),
-                      const Text(
-                        'Sri Lakshmi Narasimha Lodge',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  DateFormat('EEE, MMM d, yyyy').format(DateTime.now()),
+                                  style: const TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
+                                ),
+                                const SizedBox(height: 4),
+                                const Text(
+                                  'Sri Lakshmi Narasimha Lodge',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(Icons.home_outlined, color: Colors.white, size: 24),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
 
                 // Quick action button
                 SizedBox(
                   width: double.infinity,
-                  height: 56,
                   child: ElevatedButton.icon(
                     onPressed: () => _newBooking(context),
-                    icon: const Icon(Icons.add_circle_outline, size: 28),
-                    label: const Text('New Booking', style: TextStyle(fontSize: 18)),
+                    icon: const Icon(Icons.add, size: 20),
+                    label: const Text('New Booking'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      backgroundColor: const Color(0xFFFF5A5F),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(12),
                       ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
-                // Stats grid
-                Text('Overview', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 12),
+                // Overview stats
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Overview', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, color: const Color(0xFF222222))),
+                    Text('${stats['totalRooms'] ?? 0} rooms', style: TextStyle(color: Colors.grey[500], fontSize: 13)),
+                  ],
+                ),
+                const SizedBox(height: 14),
                 Row(
                   children: [
-                    _StatCard(
-                      title: 'Total Rooms',
-                      value: '${stats['totalRooms'] ?? 0}',
-                      icon: Icons.meeting_room,
-                      color: Colors.blue,
-                      flex: 1,
-                    ),
-                    const SizedBox(width: 12),
                     _StatCard(
                       title: 'Vacant',
                       value: '${stats['vacantRooms'] ?? 0}',
@@ -115,7 +122,7 @@ class DashboardScreen extends StatelessWidget {
                       color: Colors.green,
                       flex: 1,
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     _StatCard(
                       title: 'Occupied',
                       value: '${stats['occupiedRooms'] ?? 0}',
@@ -123,35 +130,37 @@ class DashboardScreen extends StatelessWidget {
                       color: Colors.orange,
                       flex: 1,
                     ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
+                    const SizedBox(width: 10),
                     _StatCard(
-                      title: 'Active Bookings',
+                      title: 'Active',
                       value: '${stats['activeBookings'] ?? 0}',
                       icon: Icons.book_online,
-                      color: Colors.purple,
-                      flex: 1,
-                    ),
-                    const SizedBox(width: 12),
-                    _StatCard(
-                      title: "Today's Check-ins",
-                      value: '${stats['todayCheckIns'] ?? 0}',
-                      icon: Icons.login,
-                      color: Colors.teal,
+                      color: const Color(0xFFFF5A5F),
                       flex: 1,
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
 
-                // Revenue section
-                Text('Revenue', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 12),
+                // Today
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Today's Activity", style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, color: const Color(0xFF222222))),
+                    Text(DateFormat('d MMM').format(DateTime.now()), style: TextStyle(color: Colors.grey[500], fontSize: 13)),
+                  ],
+                ),
+                const SizedBox(height: 14),
                 Row(
                   children: [
+                    _StatCard(
+                      title: "Check-ins",
+                      value: '${stats['todayCheckIns'] ?? 0}',
+                      icon: Icons.login,
+                      color: Colors.teal,
+                      flex: 1,
+                    ),
+                    const SizedBox(width: 10),
                     _StatCard(
                       title: "Today's Revenue",
                       value: '₹${NumberFormat('#,##0').format(stats['todayRevenue'] ?? 0)}',
@@ -159,9 +168,9 @@ class DashboardScreen extends StatelessWidget {
                       color: Colors.green,
                       flex: 1,
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     _StatCard(
-                      title: 'Total Advance',
+                      title: 'Advance',
                       value: '₹${NumberFormat('#,##0').format(stats['totalAdvance'] ?? 0)}',
                       icon: Icons.account_balance_wallet,
                       color: Colors.indigo,
@@ -169,30 +178,30 @@ class DashboardScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
                 // Quick links
-                Text('Quick Access', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 12),
+                Text('Quick Access', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, color: const Color(0xFF222222))),
+                const SizedBox(height: 14),
                 _QuickLink(
                   icon: Icons.meeting_room,
                   title: 'Manage Rooms',
                   subtitle: 'Add, edit or view rooms',
-                  color: Colors.blue,
+                  color: const Color(0xFFFF5A5F),
                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RoomsScreen())),
                 ),
                 _QuickLink(
                   icon: Icons.book_online,
                   title: 'All Bookings',
                   subtitle: 'View and manage bookings',
-                  color: Colors.purple,
+                  color: const Color(0xFFFF5A5F),
                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BookingsScreen())),
                 ),
                 _QuickLink(
                   icon: Icons.people,
                   title: 'Guests',
                   subtitle: 'View guest history',
-                  color: Colors.teal,
+                  color: const Color(0xFFFF5A5F),
                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GuestsScreen())),
                 ),
               ],
@@ -228,8 +237,10 @@ class _StatCard extends StatelessWidget {
     return Expanded(
       flex: flex,
       child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: Colors.grey.shade200),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Column(
@@ -279,7 +290,10 @@ class _QuickLink extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: color.withValues(alpha: 0.15),

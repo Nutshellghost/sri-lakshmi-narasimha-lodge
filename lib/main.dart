@@ -38,22 +38,27 @@ class SriLakshmiNarasimhaLodgeApp extends StatelessWidget {
             brightness: Brightness.light,
             primary: const Color(0xFFFF5A5F),
             secondary: const Color(0xFF00C4CC),
-            surface: const Color(0xFFF4F6F8),
+            surface: Colors.white,
           ),
-          scaffoldBackgroundColor: const Color(0xFFF4F6F8),
+          scaffoldBackgroundColor: Colors.white,
           useMaterial3: true,
           appBarTheme: const AppBarTheme(
             backgroundColor: Colors.white,
-            foregroundColor: Color(0xFF484848),
+            foregroundColor: Color(0xFF222222),
             centerTitle: true,
             elevation: 0,
-            scrolledUnderElevation: 1,
+            scrolledUnderElevation: 0.5,
+            surfaceTintColor: Colors.transparent,
           ),
           cardTheme: CardThemeData(
-            elevation: 1,
+            elevation: 0,
             color: Colors.white,
             shadowColor: Colors.black12,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: Color(0xFFEBEBEB)),
+            ),
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
@@ -61,7 +66,16 @@ class SriLakshmiNarasimhaLodgeApp extends StatelessWidget {
               foregroundColor: Colors.white,
               elevation: 0,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+          ),
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: OutlinedButton.styleFrom(
+              foregroundColor: const Color(0xFFFF5A5F),
+              side: const BorderSide(color: Color(0xFFFF5A5F)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             ),
           ),
           textButtonTheme: TextButtonThemeData(
@@ -71,51 +85,56 @@ class SriLakshmiNarasimhaLodgeApp extends StatelessWidget {
           ),
           inputDecorationTheme: InputDecorationTheme(
             filled: true,
-            fillColor: Colors.white,
+            fillColor: const Color(0xFFF7F7F7),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: const BorderSide(color: Color(0xFFFF5A5F), width: 2),
             ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            labelStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
           ),
           floatingActionButtonTheme: const FloatingActionButtonThemeData(
             backgroundColor: Color(0xFFFF5A5F),
             foregroundColor: Colors.white,
-            elevation: 2,
+            elevation: 0,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
           ),
           navigationBarTheme: NavigationBarThemeData(
             backgroundColor: Colors.white,
-            indicatorColor: const Color(0xFFFF5A5F).withValues(alpha: 0.12),
+            elevation: 0,
+            indicatorColor: const Color(0xFFFF5A5F).withValues(alpha: 0.1),
             labelTextStyle: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.selected)) {
-                return const TextStyle(color: Color(0xFFFF5A5F), fontSize: 12, fontWeight: FontWeight.w600);
+                return const TextStyle(color: Color(0xFFFF5A5F), fontSize: 11, fontWeight: FontWeight.w600);
               }
-              return TextStyle(color: Colors.grey[600], fontSize: 12);
+              return TextStyle(color: Colors.grey[500], fontSize: 11);
             }),
             iconTheme: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.selected)) {
-                return const IconThemeData(color: Color(0xFFFF5A5F));
+                return const IconThemeData(color: Color(0xFFFF5A5F), size: 22);
               }
-              return IconThemeData(color: Colors.grey[500]);
+              return IconThemeData(color: Colors.grey[400], size: 22);
             }),
           ),
           dividerTheme: DividerThemeData(
-            color: Colors.grey[200],
+            color: const Color(0xFFEBEBEB),
             thickness: 1,
             space: 1,
           ),
           snackBarTheme: SnackBarThemeData(
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+          progressIndicatorTheme: const ProgressIndicatorThemeData(
+            color: Color(0xFFFF5A5F),
           ),
         ),
         home: const MainShell(),
