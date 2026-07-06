@@ -4,7 +4,7 @@
     "description": "Lodge booking management system for Sri Lakshmi Narasimha Lodge, Proddatur",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#F4F6F8",
+    "background_color": "#FFFFFF",
     "theme_color": "#FF5A5F",
     "orientation": "portrait-primary",
     "scope": "/",
