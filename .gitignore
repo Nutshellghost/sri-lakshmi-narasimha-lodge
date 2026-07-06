@@ -1,0 +1,35 @@
+# Flutter
+.dart_tool/
+.packages
+build/
+*.iml
+.idea/
+.gradle/
+local.properties
+
+# Android
+android/.gradle/
+android/app/build/
+android/key.properties
+android/app/upload-keystore.jks
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Runner.xcodeproj/project.xcworkspace
+ios/Runner.xcodeproj/xcshareddata/xcschemes/
+
+# macOS
+macos/Pods/
+macos/.symlinks/
+
+# Web
+web/icons/
+
+# General
+.DS_Store
+*.swp
+*.swo
+*~

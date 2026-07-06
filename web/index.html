@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Sri Lakshmi Narasimha Lodge - Lodge booking management system for room bookings, guest management, and daily operations in Proddatur.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#8B4513">
+
+  <!-- PWA -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SLN Lodge">
+  <meta name="application-name" content="Sri Lakshmi Narasimha Lodge">
+
+  <!-- iOS -->
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="icons/Icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="icons/Icon-512.png">
+  <link rel="apple-touch-startup-image" href="icons/Icon-512.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="icons/Icon-192.png" sizes="192x192">
+
+  <!-- Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <title>Sri Lakshmi Narasimha Lodge</title>
+
+  <style>
+    html, body { margin: 0; padding: 0; background: #F5F0E8; }
+    /* Quick flash of branded background before Flutter boots */
+    body { min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <script>
+    // Register service worker for offline support
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('service_worker.js');
+      });
+    }
+  </script>
+
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
