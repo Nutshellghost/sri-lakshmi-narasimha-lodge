@@ -388,16 +388,18 @@ class _BookingList extends StatelessWidget {
     final additionalNights = _calcAdditionalNights(booking, newDate);
     final additionalCharge = booking.roomPrice * additionalNights;
     final newTotal = currentTotal + additionalCharge;
+    final widgets = <Widget>[];
 
-    return [
-      if (additionalNights > 0) ...[
-        _row('Additional Nights', '${additionalNights.toInt()} night${additionalNights > 1 ? 's' : ''}'),
-        _row('Additional Charges', '₹${additionalCharge.toStringAsFixed(0)}'),
-      ] else
-        _row('Note', 'New checkout must be after current', valueColor: Colors.red),
-      const Divider(height: 16),
-      _row('New Total', '₹${newTotal.toStringAsFixed(0)}', valueColor: Colors.blue[700]),
-    ];
+    if (additionalNights > 0) {
+      widgets.add(_row('Additional Nights', '${additionalNights.toInt()} night${additionalNights > 1 ? 's' : ''}'));
+      widgets.add(_row('Additional Charges', '₹${additionalCharge.toStringAsFixed(0)}'));
+    } else {
+      widgets.add(_row('Note', 'New checkout must be after current', valueColor: Colors.red));
+    }
+
+    widgets.add(const Divider(height: 16));
+    widgets.add(_row('New Total', '₹${newTotal.toStringAsFixed(0)}', valueColor: Colors.blue[700]));
+    return widgets;
   }
 }
 
@@ -526,7 +528,7 @@ class _BookingCard extends StatelessWidget {
                       ),
                   ],
                 ),
-              ];
+              ],
             ],
           ),
         ),
